@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.JobDao">
+    <select id="selectAllJob" parameterType="map" resultType="com.qfedu.vo.JobInfoVO">
+        select manpower_sys.tb_employee.id, manpower_sys.tb_employee.name employeeName, manpower_sys.tb_job.name jobName, manpower_sys.tb_job.remark jobRemanrk, manpower_sys.tb_user.loginname adminName, manpower_sys.tb_dept.name deptName
+        from manpower_sys.tb_employee
+                 inner join manpower_sys.tb_job
+                            on tb_employee.jid = tb_job.id
+                 inner join manpower_sys.tb_user
+                            on tb_employee.uid = tb_user.id
+                 inner join manpower_sys.tb_dept
+                            on tb_employee.did = tb_dept.id
+        <where>
+            <if test="leadName != null">
+            <!--CONCAT(#{leadName}, '%') 字符串拼接然后进行模糊查询-->
+                and manpower_sys.tb_user.loginname like CONCAT(#{leadName}, '%')
+            </if>
+            <if test="position != null">
+                and manpower_sys.tb_dept.name like CONCAT(#{position}, '%')
+            </if>
+        </where>
+        ORDER BY tb_employee.id asc
+    </select>
+
+    <select id="selectJobName" resultType="com.qfedu.entity.Job">
+        select * from tb_job
+    </select>
+
+    <insert id="addJobType" parameterType="com.qfedu.entity.Job">
+        insert into manpower_sys.tb_job (name, remark) values (#{name}, #{remark})
+    </insert>
+
+    <select id="selectJobId" parameterType="int" resultType="int">
+        select jid from tb_employee where id = #{id}
+    </select>
+
+    <delete id="deleteJobType" parameterType="int">
+        delete from tb_job where id = #{id}
+    </delete>
+
+    <select id="selectJobEchartsInfo" resultType="com.qfedu.vo.JobInfoVO">
+        select tb_job.name jobName, count(tb_job.id) as count
+            from tb_job
+                left join tb_employee
+                    on tb_job.id = tb_employee.jid
+                        group by tb_job.name
+    </select>
+
+</mapper>

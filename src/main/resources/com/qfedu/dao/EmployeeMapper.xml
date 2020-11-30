@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.EmployeeDao">
+
+    <!--    设置数据库字段与之对应的别名-->
+    <resultMap id="BaseResultMap" type="com.qfedu.entity.Employee">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="address_id" jdbcType="VARCHAR" property="addressId" />
+        <result column="birthday" jdbcType="TIMESTAMP" property="birthday" />
+        <result column="cardid" jdbcType="VARCHAR" property="cardid" />
+        <result column="createDate" jdbcType="TIMESTAMP" property="createdate" />
+        <result column="education" jdbcType="VARCHAR" property="education" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="gender" jdbcType="INTEGER" property="gender" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="party" jdbcType="VARCHAR" property="party" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="postCode" jdbcType="VARCHAR" property="postcode" />
+        <result column="qqNum" jdbcType="VARCHAR" property="qqnum" />
+        <result column="speciality" jdbcType="VARCHAR" property="speciality" />
+        <result column="did" jdbcType="INTEGER" property="did" />
+        <result column="jid" jdbcType="INTEGER" property="jid" />
+        <result column="uid" jdbcType="INTEGER" property="uid" />
+    </resultMap>
+    <!--    添加员工-->
+    <insert id="addEmployee" parameterType="com.qfedu.entity.Employee">
+        insert into tb_employee
+        <trim prefix="(" suffix= ")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="addressId != null">
+                address_id,
+            </if>
+            <if test="birthday != null">
+                birthday,
+            </if>
+            <if test="cardid != null">
+                cardid,
+            </if>
+            <if test="createDate != null">
+                createDate,
+            </if>
+            <if test="education != null">
+                education,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="party != null">
+                party,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="postCode != null">
+                postCode,
+            </if>
+            <if test="qqNum != null">
+                qqNum,
+            </if>
+            <if test="speciality != null">
+                speciality,
+            </if>
+            <if test="did != null">
+                did,
+            </if>
+            <if test="jid != null">
+                jid,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="addressId != null">
+                #{addressId,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                #{birthday,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cardid != null">
+                #{cardid,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="education != null">
+                #{education,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                #{gender,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="party != null">
+                #{party,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="postCode != null">
+                #{postCode,jdbcType=VARCHAR},
+            </if>
+            <if test="qqNum != null">
+                #{qqNum,jdbcType=VARCHAR},
+            </if>
+            <if test="speciality != null">
+                #{speciality,jdbcType=VARCHAR},
+            </if>
+            <if test="did != null">
+                #{did,jdbcType=INTEGER},
+            </if>
+            <if test="jid != null">
+                #{jid,jdbcType=INTEGER},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.qfedu.entity.Employee">
+        UPDATE tb_employee
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="addressId != null">
+                address_id = #{addressId},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="cardid != null">
+                cardid = #{cardid},
+            </if>
+            <if test="createDate != null">
+                createDate = #{createDate},
+            </if>
+            <if test="education != null">
+                education = #{education},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="party != null">
+                party = #{party},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="postCode != null">
+                postCode = #{postCode},
+            </if>
+            <if test="qqNum != null">
+                qqNum = #{qqNum},
+            </if>
+            <if test="speciality != null">
+                speciality = #{speciality},
+            </if>
+            <if test="did != null">
+                did = #{did},
+            </if>
+            <if test="jid != null">
+                jid = #{jid},
+            </if>
+            <if test="uid != null">
+                uid = #{uid},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectFuzzy" parameterType="com.qfedu.entity.Employee" resultType="com.qfedu.vo.EmployeeVO">
+        SELECT te.id id,
+        address_id,
+        CONCAT(ap.province_name, '-', ac.city_name, '-', aa.area_name) address,
+        birthday,
+        cardid,
+        createDate,
+        education,
+        email,
+        gender,
+        te.name name,
+        party,
+        phone,
+        postCode,
+        qqNum,
+        speciality,
+        did,
+        td.name dName,
+        jid,
+        tj.name jName,
+        uid
+        FROM tb_employee te
+        LEFT JOIN tb_dept td on te.did = td.id
+        LEFT JOIN tb_job tj on te.jid = tj.id
+        LEFT JOIN address_area aa on address_id = aa.id
+        LEFT JOIN address_city ac on aa.parent_city_code = ac.city_code
+        LEFT JOIN address_province ap on ac.parent_province_code = ap.province_code
+        <where>
+            <if test="did != null">AND did = #{did}</if>
+            <if test="name != null">AND te.name LIKE CONCAT('%', #{name}, '%')</if>
+            <if test="cardid != null">AND cardid LIKE CONCAT('%', #{cardid}, '%')</if>
+            <if test="jid != null">AND jid = #{jid}</if>
+            <if test="gender != null">AND gender = #{gender}</if>
+            <if test="phone != null">AND phone LIKE CONCAT('%', #{phone}, '%')</if>
+            <if test="id != null">AND te.id = #{id}</if>
+        </where>
+    </select>
+
+    <delete id="deleteByIds" parameterType="string">
+        DELETE FROM tb_employee WHERE id in
+        <trim prefix="(" suffix=")">
+        ${ids}
+        </trim>
+    </delete>
+
+</mapper>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.RentDao">
+
+    <!--    <resultMap id="RentResultMap" type="com.qfedu.vo.RentGoodsVO">-->
+    <!--        <id column="id" jdbcType="INTEGER" property="id"/>-->
+    <!--        <result column="available_count" jdbcType="INTEGER" property="availableCount"/>-->
+    <!--        <result column="disabled_count" jdbcType="INTEGER" property="disabledCount"/>-->
+    <!--    </resultMap>-->
+
+    <!--    查询所有商品-->
+    <select id="selectRentGoods" resultType="com.qfedu.vo.RentGoodsVO">
+            select * from tb_rentgoods
+            inner join tb_renttype on tb_rentgoods.tid = tb_renttype.rid
+        </select>
+
+    <!--    添加商品-->
+    <insert id="addRentGood" parameterType="com.qfedu.entity.RentGoods">
+        insert into tb_rentgoods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="item != null">
+                item,
+            </if>
+            <if test="tid != null">
+                tid,
+            </if>
+            <if test="total != null">
+                total,
+            </if>
+            <if test="available_count != null">
+                available_count,
+            </if>
+            <if test="disabled_count != null">
+                disabled_count,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="item != null">
+                #{item},
+            </if>
+            <if test="tid != null">
+                #{tid},
+            </if>
+            <if test="total != null">
+                #{total},
+            </if>
+            <if test="available_count != null">
+                #{available_count},
+            </if>
+            <if test="disabled_count != null">
+                #{disabled_count},
+            </if>
+        </trim>
+    </insert>
+
+    <!--    通过ID查找一个    修改需要使用-->
+    <select id="selectRentGoodById" resultType="com.qfedu.vo.RentGoodsVO" parameterType="int">
+        select * from tb_rentgoods
+        where id = #{id};
+    </select>
+
+    <update id="updateRentGood" parameterType="com.qfedu.entity.RentGoods">
+        update tb_rentgoods
+        <set>
+            <if test="item != null">
+                item = #{item},
+            </if>
+            <if test="tid != null">
+                tid = #{tid},
+            </if>
+            <if test="total != null">
+                total = #{total},
+            </if>
+            <if test="available_count != null">
+                available_count = #{available_count},
+            </if>
+            <if test="disabled_count != null">
+                disabled_count = #{disabled_count},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--    批量删除商品-->
+    <delete id="deleteRentGoods" parameterType="list">
+        delete from tb_rentgoods where id in
+        <foreach collection="list" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--    展示租用记录-->
+    <select id="selectRent" resultType="com.qfedu.vo.RentVO">
+        select tb_rent.*, tb_employee.name, tb_renttype.*, tb_rentgoods.item
+        from tb_employee
+         inner join tb_rent on tb_rent.eid = tb_employee.id
+         inner join tb_renttype on tb_rent.tid = tb_renttype.rid
+         inner join tb_rentgoods on tb_rentgoods.id = tb_rent.item_id
+    </select>
+
+    <!--    添加租用记录-->
+    <insert id="addRent" parameterType="com.qfedu.entity.Rent">
+        insert into tb_rent
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eid != null">
+                eid,
+            </if>
+            <if test="item_id != null">
+                item_id,
+            </if>
+            <if test="tid != null">
+                tid,
+            </if>
+            <if test="item_out_date != null">
+                item_out_date,
+            </if>
+            <if test="agreed_item_in_date != null">
+                agreed_item_in_date,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eid != null">
+                #{eid},
+            </if>
+            <if test="item_id != null">
+                #{item_id},
+            </if>
+            <if test="tid != null">
+                #{tid},
+            </if>
+            <if test="item_out_date != null">
+                #{item_out_date},
+            </if>
+            <if test="agreed_item_in_date != null">
+                #{agreed_item_in_date},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+    
+<!--    查找一个-->
+    <select id="selectRentById" parameterType="int" resultType="com.qfedu.entity.Rent">
+        select * from tb_rent
+        where id = #{id}
+    </select>
+
+<!--    修改-->
+    <update id="updateRent" parameterType="com.qfedu.entity.Rent">
+        update tb_rent
+        <set>
+            <if test="eid != null">
+                eid = #{eid},
+            </if>
+            <if test="item_id != null">
+                item_id = #{item_id},
+            </if>
+            <if test="tid != null">
+                tid = #{tid},
+            </if>
+            <if test="item_out_date != null">
+                item_out_date = #{item_out_date},
+            </if>
+            <if test="agreed_item_in_date != null">
+                agreed_item_in_date = #{agreed_item_in_date},
+            </if>
+            <if test="rent_in_date != null">
+                rent_in_date = #{rent_in_date},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+<!--    增加记录减少库存-->
+    <update id="downRent" parameterType="int">
+        update tb_rentgoods set available_count = available_count-1 where id = #{id}
+    </update>
+<!--    归还时增加-->
+    <update id="upRent" parameterType="int">
+        update tb_rentgoods set available_count = available_count+1 where id = #{id}
+    </update>
+
+</mapper>

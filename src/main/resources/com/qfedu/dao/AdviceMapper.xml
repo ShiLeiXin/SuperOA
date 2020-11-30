@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qfedu.dao.AdviceDao">
+    <select id="selectByUid" parameterType="com.qfedu.vo.AdviceVO" resultType="com.qfedu.vo.AdviceVO">
+        select ta.*,tu.username
+        from tb_advice ta
+        inner join tb_user tu
+        on ta.uid = tu.id
+        <where>
+            <if test="title != null">
+                and title like CONCAT ('%',#{title},'%')
+            </if>
+            <if test="content != null">
+                and content like  CONCAT ('%',#{content},'%')
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteById" parameterType="int">
+        delete from tb_advice where id = #{id}
+    </delete>
+
+    <delete id="deleteByIds" parameterType="list">
+        delete from tb_advice where id in
+        <foreach collection="list" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="addAdvice" parameterType="com.qfedu.entity.Advice" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_advice
+            <trim prefix="(" suffix=")" suffixOverrides="," >
+
+                <if test="content != null">
+                    content,
+                </if>
+                createDate,
+                <if test="title != null">
+                    title,
+                </if>
+                <if test="uid != null">
+                    uid,
+                </if>
+            </trim>
+            <trim prefix="values(" suffix=")" suffixOverrides="," >
+                <if test="content != null">
+                    #{content},
+                </if>
+                now(),
+                <if test="title != null">
+                    #{title},
+                </if>
+                <if test="uid != null">
+                    #{uid},
+                </if>
+            </trim>
+    </insert>
+
+    <select id="selectById" parameterType="int" resultType="advice">
+        select * from tb_advice where id = #{id}
+    </select>
+
+    <update id="updateAdvice" parameterType="advice">
+        update tb_advice
+        <trim prefix="set" suffixOverrides="," >
+
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+        <select id="selectCount" resultType="com.qfedu.dto.AdviceUser">
+            select tu.username,count(*) count
+                from tb_user tu
+                inner join tb_advice ta
+                where tu.id = ta.uid
+                group by tu.username;
+        </select>
+
+<!--    查找每天发送多少公告-->
+    <select id="echarts" resultType="com.qfedu.dto.ViewDateObject">
+        SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS ctime, COUNT(*) as sums
+        FROM tb_advice
+        GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+    </select>
+
+<!--    查看每个管理员发了多少公告-->
+    <select id="echartsAdmin" resultType="com.qfedu.vo.EchartsUidVO">
+        SELECT UID as name ,COUNT(*) AS value
+            FROM tb_advice
+            GROUP BY UID
+    </select>
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qfedu.dao.FileUploadDao">
+    <insert id="saveBatch" parameterType="list">
+        insert into tb_advice(content,createDate,title,uid) values
+        <foreach collection="list" item="u" separator=",">
+            (#{u.content}, #{u.createDate}, #{u.title}, #{u.uid})
+        </foreach>
+        ;
+    </insert>
+
+    <select id="selectNum" parameterType="int" resultType="com.qfedu.entity.Advice">
+        select * from tb_advice order by id limit #{num}
+    </select>
+
+</mapper>

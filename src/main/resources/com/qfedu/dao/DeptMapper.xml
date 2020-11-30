@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qfedu.dao.DeptDao">
+
+<!-- 查询所有部门,封装到deptVo中-->
+    <select id="selectDept" resultType="deptVO" >
+        select d.id,d.name dname,d.remark ,group_concat(e.name) as eNames,count(e.id) as count
+        from tb_dept d
+        left join  tb_employee e on  e.did = d.id
+        <where>
+            <if test="dname!=null">
+                 d.name like concat('%',#{dname},'%')
+            </if>
+        </where>
+        group by d.id
+    </select>
+
+<!--    单行删除-->
+<delete id="deleteDeptById" parameterType="string">
+    delete from tb_dept
+    where id = #{did}
+</delete>
+
+<!--批量删除-->
+<delete id="deleteDeptByIds" parameterType="list" >
+    delete from tb_dept where id in
+
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+        #{id}
+    </foreach>
+
+</delete>
+
+<!-- 添加部门   -->
+ <insert id="addDept" parameterType="Dept">
+     insert into tb_dept
+     <trim prefix="(" suffix=")" suffixOverrides=",">
+         <if test="name != null">
+             name,
+         </if>
+         <if test="remark != null">
+             remark,
+         </if>
+     </trim>
+     <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+         <if test="name != null">
+             #{name},
+         </if>
+         <if test="remark != null">
+             #{remark},
+         </if>
+     </trim>
+ </insert>
+
+<!--修改部门-->
+    <update id="updateDept" parameterType="Dept">
+        update tb_dept
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id};
+
+    </update>
+
+
+<!-- Echarts查询部门人数-->
+ <select id="selectDeptEcharts" resultType="DeptVo">
+     select d.name dname ,count(e.id) as count
+     from tb_dept d
+              left join  tb_employee e on  e.did = d.id
+     group by d.name
+
+ </select>
+
+<!--无参查询-->
+<select id="selectDeptExcel" resultType="DeptVo">
+    select d.id,d.name dname,d.remark ,group_concat(e.name) as eNames,count(e.id) as count
+    from tb_dept d
+             left join  tb_employee e on  e.did = d.id
+    group by d.id
+</select>
+
+
+<!-- 根据员工id查询部门信息   -->
+<select id="selectDeptByEid" resultType="Dept" parameterType="int">
+    select *  from
+    tb_dept d
+    inner join  tb_employee e on e.did = d.id
+    <where>
+       e.id= #{id}
+    </where>
+</select>
+</mapper>

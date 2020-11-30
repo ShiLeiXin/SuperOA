@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.AskLeaveDao">
+
+    <!-- 增 -->
+    <insert id="add" parameterType="askLeave">
+        INSERT INTO ask_leave
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null">employee_id,</if>
+            <if test="leaveTypeId != null">leave_type_id,</if>
+            <if test="reason != null">reason,</if>
+            <if test="beginTime != null">begin_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null">#{employeeId},</if>
+            <if test="leaveTypeId != null">#{leaveTypeId},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="beginTime != null">#{beginTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <!-- 改 -->
+    <update id="update" parameterType="askLeave">
+        UPDATE ask_leave
+        <set>
+            <if test="employeeId != null">employee_id = #{employeeId},</if>
+            <if test="leaveTypeId != null">leave_type_id = #{leaveTypeId},</if>
+            <if test="reason != null">reason = #{reason},</if>
+            <if test="beginTime != null">begin_time = #{beginTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 查询 -->
+    <select id="select" parameterType="askLeave" resultType="askLeaveVO">
+        SELECT al.id,
+               employee_id,
+               te.name employeeName,
+               leave_type_id,
+               lt.name leaveTypeName,
+               reason,
+               begin_time,
+               end_time,
+               create_time,
+               status,
+               CASE status WHEN '0' THEN '审核中'
+               WHEN '1' THEN '已通过'
+               WHEN '2' THEN '未通过'
+               ELSE '数据错误' END statusText
+        FROM ask_leave al
+        LEFT JOIN leave_type lt on al.leave_type_id = lt.id
+        LEFT JOIN tb_employee te on al.employee_id = te.id
+        <where>
+            <if test="employeeId != null">AND employee_id = #{employeeId} </if>
+            <if test="leaveTypeId != null">AND leave_type_id = #{leaveTypeId} </if>
+            <if test="reason != null">AND reason = #{reason} </if>
+            <if test="beginTime != null">AND DATE_FORMAT(end_time, "%Y-%m-%d") >= DATE_FORMAT(#{beginTime}, "%Y-%m-%d") </if>
+            <if test="endTime != null">AND DATE_FORMAT(begin_time, "%Y-%m-%d") &lt;= DATE_FORMAT(#{endTime}, "%Y-%m-%d") </if>
+            <if test="createTime != null">AND CONVERT(DATE, create_time) = CONVERT(DATE, #{createTime}) </if>
+            <if test="status != null">AND status = #{status} </if>
+        </where>
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="askLeave">
+        DELETE
+        FROM ask_leave
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 批量删除 -->
+    <delete id="deleteByIds" parameterType="string">
+        DELETE FROM ask_leave WHERE id in
+        <trim prefix="(" suffix=")">
+            ${ids}
+        </trim>
+    </delete>
+
+    <!-- 查询所有审批状态 -->
+    <select id="selectAllType" resultType="askLeaveVO">
+        SELECT id leave_type_id,
+               name leaveTypeName
+        FROM leave_type
+    </select>
+
+</mapper>

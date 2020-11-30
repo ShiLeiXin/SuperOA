@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.LogDao">
+
+    <select id="selectLog" parameterType="com.qfedu.vo.LogVO" resultType="com.qfedu.vo.LogVO">
+        select tl.id,tu.loginname loginName,tg.grade,tb.businessName,tb.tableName,top.operaType,tl.operateCount,tl.doDate
+        from tb_log tl
+            inner join tb_user tu on tl.uid = tu.id
+            inner join tb_grade tg on tl.gid = tg.id
+            inner join tb_bussiness tb on tl.bid = tb.id
+            inner join tb_operate top on tl.oid =top.id
+        <where>
+            <if test="loginName != null">
+                and loginName like CONCAT('%',#{loginName}, '%')
+            </if>
+            <if test="businessName != null">
+                and businessName like CONCAT('%',#{businessName}, '%')
+            </if>
+
+        </where>
+
+    </select>
+
+    <select id="selectLoginLog" parameterType="map" resultType="com.qfedu.vo.LoginLogVO">
+        select tll.id, loginCount, loginTime, tb.loginname loginName
+        from tb_loginlog tll
+        inner join tb_user tb on tll.uid = tb.id
+        <where>
+            <if test="beginTime != null">
+                DATE_FORMAT(loginTime, "%Y-%m-%d") >= DATE_FORMAT(#{beginTime},"%Y-%m-%d")
+            </if>
+            <if test="endTime != null">
+                and DATE_FORMAT(loginTime, "%Y-%m-%d") &lt;= DATE_FORMAT(#{endTime},"%Y-%m-%d")
+            </if>
+            <if test="loginName != null">
+                and loginName like CONCAT('%', #{loginName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOneLoginLog" parameterType="int" resultType="com.qfedu.vo.LoginLogVO">
+            select tll.*,tu.loginname loginName
+            from tb_loginlog tll
+            inner join tb_user tu
+            on tll.uid = tu.id
+            where uid = #{uid}
+            order by loginTime desc
+            limit 1;
+    </select>
+
+    <insert id="addLoginLog" parameterType="com.qfedu.vo.LoginLogVO">
+        insert into tb_loginlog (
+        <trim suffixOverrides=",">
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="loginCount != null">
+                loginCount,
+            </if>
+            <if test="loginTime != null">
+                loginTime
+            </if>
+        </trim>
+        ) values (
+        <trim suffixOverrides=",">
+            <if test="uid != null">
+                #{uid},
+            </if>
+            <if test="loginCount != null">
+                #{loginCount},
+            </if>
+            <if test="loginTime != null">
+                #{loginTime}
+            </if>
+        </trim>
+
+        )
+    </insert>
+
+
+    <select id="selectOneLog" parameterType="com.qfedu.entity.Log" resultType="com.qfedu.entity.Log">
+        select tl.*
+        from tb_log tl
+                 inner join tb_user tu on tl.uid = tu.id
+                 inner join tb_grade tg on tl.gid = tg.id
+                 inner join tb_bussiness tb on tl.bid = tb.id
+                 inner join tb_operate top on tl.oid =top.id
+                <where>
+                    <if test="uid != null">
+                        uid = #{uid}
+                    </if>
+                    <if test="bid != null">
+                        and bid = #{bid}
+                    </if>
+                    <if test="oid != null">
+                        and oid = #{oid}
+                    </if>
+                </where>
+        order by doDate desc
+        limit 1;
+    </select>
+
+    <insert id="addLog" parameterType="com.qfedu.entity.Log">
+        insert into tb_log (
+        <trim suffixOverrides=",">
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="gid != null">
+                gid,
+            </if>
+            <if test="bid != null">
+                bid,
+            </if>
+            <if test="oid != null">
+                oid,
+            </if>
+            <if test="operateCount != null">
+                operateCount,
+            </if>
+            <if test="doDate != null">
+                doDate
+            </if>
+
+        </trim>
+        ) values (
+        <trim suffixOverrides=",">
+            <if test="uid != null">
+                #{uid},
+            </if>
+            <if test="gid != null">
+                #{gid},
+            </if>
+            <if test="bid != null">
+                #{bid},
+            </if>
+            <if test="oid != null">
+                #{oid},
+            </if>
+            <if test="operateCount != null">
+                #{operateCount},
+            </if>
+            <if test="doDate != null">
+                #{doDate}
+            </if>
+
+        </trim>
+        )
+    </insert>
+</mapper>

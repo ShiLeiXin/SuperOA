@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.dao.UserDao">
+
+    <!--    登录的SQL语句-->
+    <select id="findByName" parameterType="string" resultType="com.qfedu.entity.User">
+                select * from tb_user where loginname=#{loginname}
+    </select>
+
+    <!--增加用户 addUser-->
+    <insert id="addUser" parameterType="com.qfedu.entity.User">
+        insert into tb_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            createDate,
+            <if test="loginname != null">
+                loginname,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <!--            <if test="imgPath != null">-->
+            <!--                imgPath,-->
+            <!--            </if>-->
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            now(),
+            <if test="loginname != null">
+                #{loginname,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <!--        <if test="imgPath != null">-->
+            <!--            #{imgPath,jdbcType=VARCHAR},-->
+            <!--        </if>-->
+        </trim>
+    </insert>
+
+    <!--    删除用户 deleteUser  -->
+    <delete id="deleteUser" parameterType="list">
+        delete from tb_user where id in
+        <foreach collection="list" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--    修改用户 updateUser-->
+    <update id="updateUser" parameterType="com.qfedu.entity.User">
+        update tb_user
+        <set>
+            <if test="createDate != null">
+                createDate = #{createDate},
+            </if>
+            <if test="loginDate != null">
+                loginDate = #{loginDate},
+            </if>
+            <if test="loginname != null">
+                loginname = #{loginname},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="imgPath != null">
+                imgPath = #{imgPath}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <sql id="BaseSql">
+        select id, createDate, loginDate, loginname, username, password, status, imgPath
+    </sql>
+    <!--    查询用户 selectUser-->
+    <select id="selectUser" resultType="com.qfedu.entity.User">
+        <include refid="BaseSql"></include>
+         from tb_user
+    </select>
+
+    <!--    查找一个用户信息-->
+    <select id="selectUserById" resultType="com.qfedu.entity.User" parameterType="int">
+        select * from tb_user where id = #{id}
+    </select>
+
+    <!--    查找关于管理员的信息-->
+    <select id="userChart" resultType="com.qfedu.dto.Userdto">
+        SELECT STATUS user, COUNT(`status`) count
+            FROM tb_user
+                GROUP BY `status`
+    </select>
+
+</mapper>
